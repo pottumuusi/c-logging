@@ -1,8 +1,10 @@
 #include <stdio.h>
 
+#include "log.h"
+
 int main(void)
 {
-    printf("Hello world\n");
+    log_error("testing error: %s", "123");
 
     return 0;
 }
