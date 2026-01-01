@@ -57,11 +57,11 @@ log_error(const char* log_error_format_string, ...)
     va_end(variadic_arguments);
 }
 
-// TODO unit test with values generating `formatting` that results in a string
-// longer than LOG_MESSAGE_MAX_SIZE when concatenated with `priority_tag`.
-//
 // TODO configure clang-format:
 // https://www.kernel.org/doc./html/latest/dev-tools/clang-format.html
+//
+// Each log message should be on its own line, so always append a line break to
+// received message to log.
 static void
 log_common(const char* priority_tag, const char* format, va_list variadic_arguments)
 {
@@ -69,27 +69,15 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
     FILE *log_handle;
 
     int ret;
-    int log_message_length;
     char log_message[LOG_MESSAGE_MAX_SIZE];
 
     ret = 0;
-    log_message_length = 0;
-
     for (int i = 0; i < LOG_MESSAGE_MAX_SIZE; i++) {
         log_message[i] = '\0';
     }
 
-    #if 0
-    int vsnprintf(char str[restrict .size], size_t size,
-                   const char *restrict format, va_list ap);
-    #endif
-    // TODO consider passing va_list to vprintf(), instead of passing to
-    // printf() via temporary buffer prepared by vsnprintf().
-    log_message_length = vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
+    vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
 
-    // TODO print the log row in parts. Start by printing tag, continue by
-    // printing formatted log_message and if a line break is wanted, it should
-    // be included in the format string.
 #if ENABLE_PRINT
     printf("%s %s\n", priority_tag, log_message);
 #endif // ENABLE_PRINT
@@ -101,31 +89,9 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
         return;
     }
 
-    // TODO could construct the string and have a single fwrite() call
-    ret = fwrite(priority_tag,
-                 sizeof(char),
-                 strnlen(priority_tag, LOG_MESSAGE_MAX_SIZE),
-                 log_handle);
-    if (ret != strnlen(priority_tag, LOG_MESSAGE_MAX_SIZE)) {
-        fprintf(stderr, "Failed to write tag to log file\n");
-        return;
-    }
-
-    ret = fwrite(" ", sizeof(char), 1, log_handle);
-    if (ret != 1) {
-        fprintf(stderr, "Failed to write space to log file\n");
-        return;
-    }
-
-    ret = fwrite(log_message, sizeof(char), log_message_length, log_handle);
-    if (ret != log_message_length) {
-        fprintf(stderr, "Failed to write log message to log file\n");
-        return;
-    }
-
-    ret = fwrite("\n", sizeof(char), 1, log_handle);
-    if (ret != 1) {
-        fprintf(stderr, "Failed to write newline to log file\n");
+    ret = fprintf(log_handle, "%s %s\n", priority_tag, log_message);
+    if (ret < 0) {
+        perror("Failed to write to " LOG_FILE_NAME);
         return;
     }
 
@@ -134,5 +100,6 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
         perror("Failed to close handle of " LOG_FILE_NAME);
         return;
     }
+    log_handle = NULL;
 #endif // ENABLE_LOG_WRITE
 }
