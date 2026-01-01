@@ -47,6 +47,8 @@ int fprintf_like (void * data, const char * format, ...)
 // * "Type must not be changed by the translator: The type of the last
 //   parameter must not be altered by the compiler during translation 3."
 // * [3] https://stackoverflow.com/questions/1353407/last-named-parameter-not-function-or-array
+//
+// Conclusion, instead of documenting mysterious call to va_start(), use C23.
 void
 log_error(const char* log_error_format_string, ...)
 {
