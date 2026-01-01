@@ -36,10 +36,10 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
         log_message[i] = '\0';
     }
 
-    vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
+    (void) vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
 
 #if ENABLE_PRINT
-    printf("%s %s\n", priority_tag, log_message);
+    (void) printf("%s %s\n", priority_tag, log_message);
 #endif // ENABLE_PRINT
 
 #if ENABLE_LOG_WRITE
