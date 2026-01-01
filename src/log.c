@@ -31,6 +31,7 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
     int ret;
     char log_message[LOG_MESSAGE_MAX_SIZE];
 
+    handle_log = NULL;
     ret = 0;
     for (int i = 0; i < LOG_MESSAGE_MAX_SIZE; i++) {
         log_message[i] = '\0';
