@@ -66,7 +66,7 @@ static void
 log_common(const char* priority_tag, const char* format, va_list variadic_arguments)
 {
 
-    FILE *log_handle;
+    FILE *handle_log;
 
     int ret;
     char log_message[LOG_MESSAGE_MAX_SIZE];
@@ -83,23 +83,23 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
 #endif // ENABLE_PRINT
 
 #if ENABLE_LOG_WRITE
-    log_handle = fopen(LOG_FILE_NAME, "w");
-    if (NULL == log_handle) {
+    handle_log = fopen(LOG_FILE_NAME, "w");
+    if (NULL == handle_log) {
         perror("Failed to get handle for " LOG_FILE_NAME);
         return;
     }
 
-    ret = fprintf(log_handle, "%s %s\n", priority_tag, log_message);
+    ret = fprintf(handle_log, "%s %s\n", priority_tag, log_message);
     if (ret < 0) {
         perror("Failed to write to " LOG_FILE_NAME);
         return;
     }
 
-    ret = fclose(log_handle);
+    ret = fclose(handle_log);
     if (0 != ret) {
         perror("Failed to close handle of " LOG_FILE_NAME);
         return;
     }
-    log_handle = NULL;
+    handle_log = NULL;
 #endif // ENABLE_LOG_WRITE
 }
