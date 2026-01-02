@@ -55,6 +55,7 @@ log_error(const char* log_error_format_string, ...)
 static void
 log_common(const char* priority_tag, const char* format, va_list variadic_arguments)
 {
+    const char *format_log = "%s %s\n";
 
     FILE *handle_log;
 
@@ -70,17 +71,18 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
     (void) vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
 
 #if ENABLE_PRINT
-    (void) printf("%s %s\n", priority_tag, log_message);
+    (void) printf(format_log, priority_tag, log_message);
 #endif // ENABLE_PRINT
 
 #if ENABLE_LOG_WRITE
+    // TODO consider opening the log file once during program lifespan
     handle_log = fopen(LOG_FILE_NAME, "w");
     if (NULL == handle_log) {
         perror("Failed to get handle for " LOG_FILE_NAME);
         return;
     }
 
-    ret = fprintf(handle_log, "%s %s\n", priority_tag, log_message);
+    ret = fprintf(handle_log, format_log, priority_tag, log_message);
     if (ret < 0) {
         perror("Failed to write to " LOG_FILE_NAME);
         return;
