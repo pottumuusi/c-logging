@@ -14,6 +14,11 @@
 
 #define LOG_MESSAGE_MAX_SIZE 256
 
+#define LOG_TAG_INFO "[ INF ]"
+#define LOG_TAG_DEBUG "[ DBG ]"
+#define LOG_TAG_WARNING "[ WRN ]"
+#define LOG_TAG_ERROR "[ ERR ]"
+
 int log_initialize(void);
 int log_teardown(void);
 

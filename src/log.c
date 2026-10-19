@@ -32,7 +32,7 @@ log_info(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		"[INFO]",
+		LOG_TAG_INFO,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -50,7 +50,7 @@ log_debug(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		"[DBG ]",
+		LOG_TAG_DEBUG,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -68,7 +68,7 @@ log_warning(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		"[WARN]",
+		LOG_TAG_WARNING,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -86,7 +86,7 @@ log_error(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		"[ERR ]",
+		LOG_TAG_ERROR,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
