@@ -10,6 +10,12 @@ log_common(
 	const char* format,
 	va_list variadic_arguments);
 
+static bool
+log_write_to_file(
+	const char *format_log,
+	const char* priority_tag,
+	char log_message[LOG_MESSAGE_MAX_SIZE]);
+
 /*
  * https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Syntax
  * > `va_start` macro no longer needs a second argument nor does it evaluate
