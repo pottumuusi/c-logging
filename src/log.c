@@ -7,6 +7,12 @@
 static void
 log_common(const char* priority_tag, const char* format, va_list variadic_arguments);
 
+/*
+ * https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Syntax
+ * > `va_start` macro no longer needs a second argument nor does it evaluate
+ *   any argument after the first one if present
+ */
+
 void
 log_info(const char* log_info_format_string, ...)
 {
