@@ -20,12 +20,30 @@
 #define LOG_TAG_WARNING "[ WRN ]"
 #define LOG_TAG_ERROR "[ ERR ]"
 
-bool log_initialize(void);
-bool log_teardown(void);
+/*
+ * Library initialization and teardown.
+ */
 
-bool log_info(const char* format, ...);
-bool log_debug(const char* format, ...);
-bool log_warning(const char* format, ...);
-bool log_error(const char* format, ...);
+bool
+log_initialize(void);
+
+bool
+log_teardown(void);
+
+/*
+ * Logging.
+ */
+
+bool
+log_info(const char* format, ...);
+
+bool
+log_debug(const char* format, ...);
+
+bool
+log_warning(const char* format, ...);
+
+bool
+log_error(const char* format, ...);
 
 #endif // LOG_H_DEFINED
