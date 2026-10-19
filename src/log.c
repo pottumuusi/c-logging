@@ -5,7 +5,10 @@
 #include "log.h"
 
 static void
-log_common(const char* priority_tag, const char* format, va_list variadic_arguments);
+log_common(
+	const char* priority_tag,
+	const char* format,
+	va_list variadic_arguments);
 
 /*
  * https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Syntax
@@ -16,41 +19,41 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
 void
 log_info(const char* format_string, ...)
 {
-    va_list variadic_arguments;
+	va_list variadic_arguments;
 
-    va_start(variadic_arguments);
-    log_common("[INFO]", format_string, variadic_arguments);
-    va_end(variadic_arguments);
+	va_start(variadic_arguments);
+	log_common("[INFO]", format_string, variadic_arguments);
+	va_end(variadic_arguments);
 }
 
 void
 log_debug(const char* format_string, ...)
 {
-    va_list variadic_arguments;
+	va_list variadic_arguments;
 
-    va_start(variadic_arguments);
-    log_common("[DBG ]", format_string, variadic_arguments);
-    va_end(variadic_arguments);
+	va_start(variadic_arguments);
+	log_common("[DBG ]", format_string, variadic_arguments);
+	va_end(variadic_arguments);
 }
 
 void
 log_warning(const char* format_string, ...)
 {
-    va_list variadic_arguments;
+	va_list variadic_arguments;
 
-    va_start(variadic_arguments);
-    log_common("[WARN]", format_string, variadic_arguments);
-    va_end(variadic_arguments);
+	va_start(variadic_arguments);
+	log_common("[WARN]", format_string, variadic_arguments);
+	va_end(variadic_arguments);
 }
 
 void
 log_error(const char* format_string, ...)
 {
-    va_list variadic_arguments;
+	va_list variadic_arguments;
 
-    va_start(variadic_arguments);
-    log_common("[ERR ]", format_string, variadic_arguments);
-    va_end(variadic_arguments);
+	va_start(variadic_arguments);
+	log_common("[ERR ]", format_string, variadic_arguments);
+	va_end(variadic_arguments);
 }
 
 #if ENABLE_LOG_WRITE
@@ -108,20 +111,23 @@ fail:
  * received message to log.
  */
 static void
-log_common(const char* priority_tag, const char* format, va_list variadic_arguments)
+log_common(
+	const char* priority_tag,
+	const char* format,
+	va_list variadic_arguments)
 {
-    const char *format_log = "%s %s\n";
+	const char *format_log = "%s %s\n";
 
-    char log_message[LOG_MESSAGE_MAX_SIZE];
+	char log_message[LOG_MESSAGE_MAX_SIZE];
 
-    for (int i = 0; i < LOG_MESSAGE_MAX_SIZE; i++) {
-        log_message[i] = '\0';
-    }
+	for (int i = 0; i < LOG_MESSAGE_MAX_SIZE; i++) {
+		log_message[i] = '\0';
+	}
 
-    (void) vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
+	(void) vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
 
 #if ENABLE_PRINT
-    (void) printf(format_log, priority_tag, log_message);
+	(void) printf(format_log, priority_tag, log_message);
 #endif // ENABLE_PRINT
 
 #if ENABLE_LOG_WRITE
