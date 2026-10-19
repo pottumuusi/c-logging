@@ -4,7 +4,7 @@
 
 #include "log.h"
 
-static void
+static bool
 log_common(
 	const char* priority_tag,
 	const char* format,
@@ -22,44 +22,76 @@ log_write_to_file(
  *   any argument after the first one if present
  */
 
-void
+bool
 log_info(const char* format_string, ...)
 {
+	bool performance_success;
 	va_list variadic_arguments;
 
+	performance_success = false;
+
 	va_start(variadic_arguments);
-	log_common("[INFO]", format_string, variadic_arguments);
+	performance_success = log_common(
+		"[INFO]",
+		format_string,
+		variadic_arguments);
 	va_end(variadic_arguments);
+
+	return performance_success;
 }
 
-void
+bool
 log_debug(const char* format_string, ...)
 {
+	bool performance_success;
 	va_list variadic_arguments;
 
+	performance_success = false;
+
 	va_start(variadic_arguments);
-	log_common("[DBG ]", format_string, variadic_arguments);
+	performance_success = log_common(
+		"[DBG ]",
+		format_string,
+		variadic_arguments);
 	va_end(variadic_arguments);
+
+	return performance_success;
 }
 
-void
+bool
 log_warning(const char* format_string, ...)
 {
+	bool performance_success;
 	va_list variadic_arguments;
 
+	performance_success = false;
+
 	va_start(variadic_arguments);
-	log_common("[WARN]", format_string, variadic_arguments);
+	performance_success = log_common(
+		"[WARN]",
+		format_string,
+		variadic_arguments);
 	va_end(variadic_arguments);
+
+	return performance_success;
 }
 
-void
+bool
 log_error(const char* format_string, ...)
 {
+	bool performance_success;
 	va_list variadic_arguments;
 
+	performance_success = false;
+
 	va_start(variadic_arguments);
-	log_common("[ERR ]", format_string, variadic_arguments);
+	performance_success = log_common(
+		"[ERR ]",
+		format_string,
+		variadic_arguments);
 	va_end(variadic_arguments);
+
+	return performance_success;
 }
 
 #if ENABLE_LOG_WRITE
@@ -112,11 +144,12 @@ fail:
 }
 #endif // ENABLE_LOG_WRITE
 
+#define ERROR_LOG_COMMON_VSNPRINTF "Failed to write resulting log to a character array.\n"
 /*
  * Each log message should be on its own line, so always append a line break to
  * received message to log.
  */
-static void
+static bool
 log_common(
 	const char* priority_tag,
 	const char* format,
@@ -124,13 +157,23 @@ log_common(
 {
 	const char *format_log = "%s %s\n";
 
+	int return_value;
 	char log_message[LOG_MESSAGE_MAX_SIZE];
 
 	for (int i = 0; i < LOG_MESSAGE_MAX_SIZE; i++) {
 		log_message[i] = '\0';
 	}
+	return_value = -1;
 
-	(void) vsnprintf(log_message, LOG_MESSAGE_MAX_SIZE, format, variadic_arguments);
+	return_value = vsnprintf(
+		log_message,
+		LOG_MESSAGE_MAX_SIZE,
+		format,
+		variadic_arguments);
+	if (return_value < 0) {
+		fprintf(stderr, ERROR_LOG_COMMON_VSNPRINTF);
+		goto fail;
+	}
 
 #if ENABLE_PRINT
 	(void) printf(format_log, priority_tag, log_message);
@@ -139,4 +182,9 @@ log_common(
 #if ENABLE_LOG_WRITE
 	log_write_to_file(format_log, priority_tag, log_message);
 #endif // ENABLE_LOG_WRITE
+
+	return true;
+
+fail:
+	return false;
 }

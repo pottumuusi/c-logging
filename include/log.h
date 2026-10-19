@@ -17,9 +17,9 @@
 int log_initialize(void);
 int log_teardown(void);
 
-void log_info(const char* format, ...);
-void log_debug(const char* format, ...);
-void log_warning(const char* format, ...);
-void log_error(const char* format, ...);
+bool log_info(const char* format, ...);
+bool log_debug(const char* format, ...);
+bool log_warning(const char* format, ...);
+bool log_error(const char* format, ...);
 
 #endif // LOG_H_DEFINED
