@@ -14,50 +14,49 @@ log_common(const char* priority_tag, const char* format, va_list variadic_argume
  */
 
 void
-log_info(const char* log_info_format_string, ...)
+log_info(const char* format_string, ...)
 {
     va_list variadic_arguments;
 
     va_start(variadic_arguments);
-    log_common("[INFO]", log_info_format_string, variadic_arguments);
+    log_common("[INFO]", format_string, variadic_arguments);
     va_end(variadic_arguments);
 }
 
 void
-log_debug(const char* log_debug_format_string, ...)
+log_debug(const char* format_string, ...)
 {
     va_list variadic_arguments;
 
     va_start(variadic_arguments);
-    log_common("[DBG ]", log_debug_format_string, variadic_arguments);
+    log_common("[DBG ]", format_string, variadic_arguments);
     va_end(variadic_arguments);
 }
 
 void
-log_warning(const char* log_warning_format_string, ...)
+log_warning(const char* format_string, ...)
 {
     va_list variadic_arguments;
 
     va_start(variadic_arguments);
-    log_common("[WARN]", log_warning_format_string, variadic_arguments);
+    log_common("[WARN]", format_string, variadic_arguments);
     va_end(variadic_arguments);
 }
 
 void
-log_error(const char* log_error_format_string, ...)
+log_error(const char* format_string, ...)
 {
     va_list variadic_arguments;
 
     va_start(variadic_arguments);
-    log_common("[ERR ]", log_error_format_string, variadic_arguments);
+    log_common("[ERR ]", format_string, variadic_arguments);
     va_end(variadic_arguments);
 }
 
-// TODO configure clang-format:
-// https://www.kernel.org/doc./html/latest/dev-tools/clang-format.html
-//
-// Each log message should be on its own line, so always append a line break to
-// received message to log.
+/*
+ * Each log message should be on its own line, so always append a line break to
+ * received message to log.
+ */
 static void
 log_common(const char* priority_tag, const char* format, va_list variadic_arguments)
 {
