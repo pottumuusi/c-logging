@@ -94,6 +94,41 @@ log_error(const char* format_string, ...)
 	return performance_success;
 }
 
+bool
+log_initialize(void)
+{
+#if ENABLE_LOG_FILE_TRUNCATION
+	FILE *handle_log;
+	int return_value;
+
+	return_value = -1;
+	handle_log = 0;
+
+	handle_log = fopen(LOG_FILE_NAME, "w");
+	if (NULL == handle_log) {
+		fprintf(stderr,
+			"%s: Failed to get handle for: %s\n",
+			__func__,
+			LOG_FILE_NAME);
+		goto fail;
+	}
+
+	return_value = fclose(handle_log);
+	if (0 != return_value) {
+		fprintf(stderr,
+			"%s: Failed to close handle of: %s\n",
+			__func__,
+			LOG_FILE_NAME);
+		goto fail;
+	}
+#endif // ENABLE_LOG_FILE_TRUNCATION
+
+	return true;
+
+fail:
+	return false;
+}
+
 #if ENABLE_LOG_WRITE
 static bool
 log_write_to_file(
@@ -108,7 +143,7 @@ log_write_to_file(
 	handle_log = NULL;
 
 	// TODO consider opening the log file once during program lifespan
-	handle_log = fopen(LOG_FILE_NAME, "w");
+	handle_log = fopen(LOG_FILE_NAME, "a");
 	if (NULL == handle_log) {
 		perror("Failed to get handle for " LOG_FILE_NAME);
 		goto fail;

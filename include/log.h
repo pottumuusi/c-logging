@@ -7,6 +7,7 @@
 
 #define ENABLE_PRINT 1
 #define ENABLE_LOG_WRITE 1
+#define ENABLE_LOG_FILE_TRUNCATION 1
 
 #define stringize_value_of(input) stringize(input)
 #define stringize(input) #input
@@ -19,8 +20,8 @@
 #define LOG_TAG_WARNING "[ WRN ]"
 #define LOG_TAG_ERROR "[ ERR ]"
 
-int log_initialize(void);
-int log_teardown(void);
+bool log_initialize(void);
+bool log_teardown(void);
 
 bool log_info(const char* format, ...);
 bool log_debug(const char* format, ...);
