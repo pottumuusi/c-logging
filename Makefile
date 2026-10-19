@@ -7,4 +7,4 @@ PROGRAM_NAME := demo
 # > `va_start` macro no longer needs a second argument nor does it evaluate any
 #   argument after the first one if present
 demo: $(SRC_DEMO)
-	$(CC) $(INCLUDE) -DPROGRAM_NAME=$(PROGRAM_NAME) --std=c23 -Wall --pedantic -Werror $^ -o $@
+	$(CC) $(INCLUDE) -DPROGRAM_NAME=$(PROGRAM_NAME) --std=c23 --pedantic -Werror $^ -o $@
