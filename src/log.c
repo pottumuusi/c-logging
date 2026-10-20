@@ -4,16 +4,27 @@
 
 #include "log.h"
 
+const char *g_log_tag_info = "[ INF ]";
+const char *g_log_tag_debug = "[ DBG ]";
+const char *g_log_tag_warning = "[ WRN ]";
+const char *g_log_tag_error = "[ ERR ]";
+
 static bool
 log_common(
-	const char* priority_tag,
+	enum log_priority priority,
 	const char* format,
 	va_list variadic_arguments);
 
 static bool
 log_write_to_file(
-	const char *format_log,
-	const char* priority_tag,
+	enum log_priority priority,
+	const char *format_final,
+	char log_message[LOG_MESSAGE_MAX_SIZE]);
+
+static bool
+log_write_to_stdout(
+	enum log_priority priority,
+	const char *format_final,
 	char log_message[LOG_MESSAGE_MAX_SIZE]);
 
 /*
@@ -32,7 +43,7 @@ log_info(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		LOG_TAG_INFO,
+		LOG_PRIORITY_INFO,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -50,7 +61,7 @@ log_debug(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		LOG_TAG_DEBUG,
+		LOG_PRIORITY_DEBUG,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -68,7 +79,7 @@ log_warning(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		LOG_TAG_WARNING,
+		LOG_PRIORITY_WARNING,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -86,7 +97,7 @@ log_error(const char* format_string, ...)
 
 	va_start(variadic_arguments);
 	performance_success = log_common(
-		LOG_TAG_ERROR,
+		LOG_PRIORITY_ERROR,
 		format_string,
 		variadic_arguments);
 	va_end(variadic_arguments);
@@ -129,11 +140,29 @@ fail:
 	return false;
 }
 
+const char*
+priority_to_priority_tag(enum log_priority priority)
+{
+	if (LOG_PRIORITY_INFO == priority) {
+		return g_log_tag_info;
+	} else if (LOG_PRIORITY_DEBUG == priority) {
+		return g_log_tag_debug;
+	} else if (LOG_PRIORITY_WARNING == priority) {
+		return g_log_tag_warning;
+	} else if (LOG_PRIORITY_ERROR == priority) {
+		return g_log_tag_error;
+	} else {
+		fprintf(stderr, "Unknown priority: %d\n", priority);
+	}
+
+	return NULL;
+}
+
 #if ENABLE_LOG_WRITE
 static bool
 log_write_to_file(
-	const char *format_log,
-	const char* priority_tag,
+	enum log_priority priority,
+	const char *format_final,
 	char log_message[LOG_MESSAGE_MAX_SIZE])
 {
 	int return_value;
@@ -149,7 +178,11 @@ log_write_to_file(
 		goto fail;
 	}
 
-	return_value = fprintf(handle_log, format_log, priority_tag, log_message);
+	return_value = fprintf(
+		handle_log,
+		format_final,
+		priority_to_priority_tag(priority),
+		log_message);
 	if (return_value < 0) {
 		perror("Failed to write to " LOG_FILE_NAME);
 		goto fail;
@@ -179,6 +212,20 @@ fail:
 }
 #endif // ENABLE_LOG_WRITE
 
+#if ENABLE_PRINT
+static bool
+log_write_to_stdout(
+	enum log_priority priority,
+	const char *format_final,
+	char log_message[LOG_MESSAGE_MAX_SIZE])
+{
+	printf(
+		format_final,
+		priority_to_priority_tag(priority),
+		log_message);
+}
+#endif // ENABLE_PRINT
+
 #define ERROR_LOG_COMMON_VSNPRINTF "Failed to write resulting log to a character array.\n"
 /*
  * Each log message should be on its own line, so always append a line break to
@@ -186,11 +233,11 @@ fail:
  */
 static bool
 log_common(
-	const char* priority_tag,
+	const enum log_priority priority,
 	const char* format,
 	va_list variadic_arguments)
 {
-	const char *format_log = "%s %s\n";
+	const char *format_final = "%s %s\n";
 
 	int return_value;
 	char log_message[LOG_MESSAGE_MAX_SIZE];
@@ -211,11 +258,11 @@ log_common(
 	}
 
 #if ENABLE_PRINT
-	(void) printf(format_log, priority_tag, log_message);
+	log_write_to_stdout(priority, format_final, log_message);
 #endif // ENABLE_PRINT
 
 #if ENABLE_LOG_WRITE
-	log_write_to_file(format_log, priority_tag, log_message);
+	log_write_to_file(priority, format_final, log_message);
 #endif // ENABLE_LOG_WRITE
 
 	return true;
