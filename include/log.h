@@ -15,17 +15,10 @@
 
 #define LOG_MESSAGE_MAX_SIZE 256
 
-extern const char *g_log_tag_info;
-extern const char *g_log_tag_debug;
-extern const char *g_log_tag_warning;
-extern const char *g_log_tag_error;
-
-enum log_priority {
-	LOG_PRIORITY_INFO,
-	LOG_PRIORITY_DEBUG,
-	LOG_PRIORITY_WARNING,
-	LOG_PRIORITY_ERROR
-};
+#define LOG_TAG_INFO "[ INF ]"
+#define LOG_TAG_DEBUG "[ DBG ]"
+#define LOG_TAG_WARNING "[ WRN ]"
+#define LOG_TAG_ERROR "[ ERR ]"
 
 /*
  * Library initialization and teardown.
