@@ -10,6 +10,7 @@ log_common(
 	const char* format,
 	va_list variadic_arguments);
 
+// TODO utilize #if ENABLE_LOG_WRITE (?)
 static bool
 log_write_to_file(
 	const char *format_log,
